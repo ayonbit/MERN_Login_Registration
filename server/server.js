@@ -6,10 +6,8 @@ const dotenv = require("dotenv").config();
 //app
 const app = express();
 
-//home rotues
-app.get("/", (req, res) => {
-  res.send("Home Page ");
-});
+// rotues
+app.use("/", require("./routes/authRoutes"));
 
 //port
 const PORT = process.env.PORT;
