@@ -31,14 +31,16 @@ const registerUser = async (req, res) => {
       });
     }
     //
-    
+
     //user create
     const user = await User.create({
       name,
       email,
       password,
     });
+
     //user return
+    console.log(user);
     return res.json(user);
   } catch (error) {
     console.log(error);
