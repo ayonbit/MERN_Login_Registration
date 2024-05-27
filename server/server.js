@@ -1,9 +1,10 @@
 //dependencies
 const express = require("express");
-const cors = require("cors");
+//const cors = require("cors");
 const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 //const errorHandler = require("./helper/errorHandler");
 //app
 const app = express();
@@ -12,6 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 //  Middleware Rotues
 app.use("/", require("./routes/authRoutes"));

@@ -3,7 +3,7 @@
 const User = require("../models/user");
 //const bcrypt = require("bcrypt");
 const { hashPassword, comparePassword } = require("../helper/auth");
-
+const jwt = require("jsonwebtoken");
 //test Home page
 const test = async (req, res) => {
   res.json("Test is working ");
@@ -75,14 +75,37 @@ const loginUser = async (req, res) => {
     }
     //if match
     if (match) {
-      res.json("Password Matched");
+      jwt.sign(
+        { email: user.email, id: user._id, name: user.name },
+        process.env.JWT_SECRET,
+        {},
+        (err, token) => {
+          if (err) throw err;
+          res.cookie("token", token).json(user);
+        }
+      );
     }
   } catch (error) {
     console.log(error);
   }
 };
+
+//get Profile
+const getProfile = async (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
+      if (err) throw err;
+      res.json(user);
+    });
+  } else {
+    res.json(null);
+  }
+};
+
 module.exports = {
   test,
   registerUser,
   loginUser,
+  getProfile,
 };
