@@ -1,7 +1,8 @@
 //dependencies
 //const asyncHandler = require("express-async-handler");
 const User = require("../models/user");
-const bcrypt = require("bcrypt");
+//const bcrypt = require("bcrypt");
+const { hashPassword, comparePassword } = require("../helper/auth");
 
 //test Home page
 const test = async (req, res) => {
@@ -30,13 +31,14 @@ const registerUser = async (req, res) => {
         error: "Email Already been used",
       });
     }
-    //
+    //hashed password
+    const hashedPassword = await hashPassword(password);
 
-    //user create
+    //user create in Database
     const user = await User.create({
       name,
       email,
-      password,
+      password: hashedPassword,
     });
 
     //user return
@@ -47,7 +49,40 @@ const registerUser = async (req, res) => {
   }
 };
 
+//Login User
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    // if (!email || !password) {
+    //   return res.json({
+    //     error: "Please fill in the Form",
+    //   });
+    // }
+    //check if user exists in db
+    const user = await User.findOne({ email });
+    //const name = await user.name;
+    if (!user) {
+      return res.json({
+        error: "User Not Found! Please Register First",
+      });
+    }
+    //check user password matched
+    const match = await comparePassword(password, user.password);
+    if (!match) {
+      res.json({
+        error: "Password Not Matched",
+      });
+    }
+    //if match
+    if (match) {
+      res.json("Password Matched");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 module.exports = {
   test,
   registerUser,
+  loginUser,
 };

@@ -15,4 +15,12 @@ const hashPassword = (password) => {
     });
   });
 };
-const comparePassword = (password, hashed) => {};
+
+const comparePassword = (password, hashed) => {
+  return bcrypt.compare(password, hashed);
+};
+
+module.exports = {
+  hashPassword,
+  comparePassword,
+};
